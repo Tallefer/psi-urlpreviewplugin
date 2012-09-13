@@ -229,6 +229,12 @@ void UrlPreviewPlugin::applyOptions()
 
 
     psiOptions->setPluginOption(constmaxImageSize, m_maxImageSize);
+    psiOptions->setPluginOption(constmaxFileSize, m_maxFileSize);
+    psiOptions->setPluginOption(constenableYoutubePreview, m_enableYoutubePreview);
+    psiOptions->setPluginOption(constenableImagesPreview, m_enableImagesPreview);
+    psiOptions->setPluginOption(constenableSitePreview, m_enableSitePreview);
+    psiOptions->setPluginOption(constenableHTML5Audio, m_enableHTML5Audio);
+    psiOptions->setPluginOption(constenableHTML5Video, m_enableHTML5Video);
 
 }
 
