@@ -84,6 +84,9 @@ private:
     const QRegExp &getLinkRegExp();
     void checkLink(QString &link, QString from, qint64 id);
     void widgetUpdate(QString uid, QString pstr);
+    void createCacheDir();
+    void clearCache();
+
 
 private:
 	bool enabled;

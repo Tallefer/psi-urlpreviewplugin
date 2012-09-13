@@ -86,10 +86,6 @@ UrlPreviewPlugin::UrlPreviewPlugin():
     m_youtubeTemplate =	"<img src=\"http://img.youtube.com/vi/%YTID%/1.jpg\">"
                                        "<img src=\"http://img.youtube.com/vi/%YTID%/2.jpg\">"
                                        "<img src=\"http://img.youtube.com/vi/%YTID%/3.jpg\"><br>";
-    m_youtubeTemplate =	"<img src=\"http://img.youtube.com/vi/%YTID%/1.jpg\">"
-                                       "<img src=\"http://img.youtube.com/vi/%YTID%/2.jpg\">"
-                                       "<img src=\"http://img.youtube.com/vi/%YTID%/3.jpg\"><br>";
-
     m_siteTemplate =	"<br><img src=\"%URL%\"><br>";
 
     m_html5AudioTemplate = "<audio controls=\"controls\" preload=\"none\"><source src=\"%AUDIOURL%\" type=\"%FILETYPE%\"/>" % tr("Something went wrong.") % "</audio>";
@@ -147,20 +143,8 @@ bool UrlPreviewPlugin::enable()
 {
 	enabled = true;
 
-	QVariant v = psiOptions->getPluginOption(constVersionOpt, QVariant::Invalid);
-
-	//Проверяем, обновился ли плагин
-	if(!v.isValid() || v.toString() != constVersion) {
-		QDir dir(applicationInfo->appHomeDir(ApplicationInfoAccessingHost::CacheLocation)+"/avatars");
-		foreach(const QString& f, QDir(dir.path()+"/juick/per").entryList(QDir::Files)) {
-			QFile::remove(dir.path()+"/juick/per/"+f);
-		}
-		foreach(const QString& f, QDir(dir.path()+"/juick").entryList(QDir::Files)) {
-			QFile::remove(dir.path()+"/juick/"+f);
-		}
-		dir.rmdir("juick/per");
-		psiOptions->setPluginOption(constVersionOpt, constVersion);
-	}
+    psiOptions->setPluginOption(constVersionOpt, constVersion);
+    createCacheDir();
 
      m_maxImageSize = psiOptions->getPluginOption(constmaxImageSize,m_maxImageSize).toSize();
      m_maxFileSize = psiOptions->getPluginOption(constmaxFileSize,m_maxFileSize).toDouble();
@@ -200,16 +184,32 @@ bool UrlPreviewPlugin::disable()
 {
 	enabled = false;
 	logs_.clear();
-	QDir dir(applicationInfo->appHomeDir(ApplicationInfoAccessingHost::CacheLocation)+"/avatars/juick/photos");
-	foreach(const QString& file, dir.entryList(QDir::Files)) {
-		QFile::remove(dir.absolutePath()+"/"+file);
-	}
+
+    clearCache();
 
 	downloader_->disconnect();
 	downloader_->deleteLater();
 	downloader_ = 0;
 
 	return true;
+}
+
+void UrlPreviewPlugin::createCacheDir()
+{
+    QDir dir(applicationInfo->appHomeDir(ApplicationInfoAccessingHost::CacheLocation));
+    dir.mkpath("urlpreview");
+    if (!dir.exists("urlpreview"))
+    {
+        QMessageBox::warning(0, tr("Warning"),tr("can't create folder %1 \ncaching avatars will be not available")
+                     .arg(applicationInfo->appHomeDir(ApplicationInfoAccessingHost::CacheLocation)+"/urlpreview"));
+    }
+}
+void UrlPreviewPlugin::clearCache()
+{
+    QDir dir(applicationInfo->appHomeDir(ApplicationInfoAccessingHost::CacheLocation)+"/urlpreview");
+    foreach(const QString& file, dir.entryList(QDir::Files)) {
+        QFile::remove(dir.absolutePath()+"/"+file);
+    }
 }
 
 void UrlPreviewPlugin::applyOptions()
@@ -564,7 +564,7 @@ void UrlPreviewPlugin::netmanFinished(QNetworkReply *reply)
     if (!showPreviewHead && m_enableSitePreview)
     {
         const QUrl photoUrl(url);
-        const QDir dir(applicationInfo->appHomeDir(ApplicationInfoAccessingHost::CacheLocation)+"/avatars/juick/photos");
+        const QDir dir(applicationInfo->appHomeDir(ApplicationInfoAccessingHost::CacheLocation)+"/urlpreview");
         const QString path(QString("%1/%2").arg(dir.absolutePath()).arg(uid));
         //url = QString("http://get.thumbshots.ru/?url=%1&size=L").arg(url);
         url = QString("http://mini.s-shot.ru/?%1").arg(url);
@@ -582,7 +582,7 @@ void UrlPreviewPlugin::netmanFinished(QNetworkReply *reply)
     if (type.contains(typerx) && 0 < size && size < m_maxFileSize && m_enableImagesPreview) {
 
         const QUrl photoUrl(url);
-        const QDir dir(applicationInfo->appHomeDir(ApplicationInfoAccessingHost::CacheLocation)+"/avatars/juick/photos");
+        const QDir dir(applicationInfo->appHomeDir(ApplicationInfoAccessingHost::CacheLocation)+"/urlpreview");
         const QString path(QString("%1/%2").arg(dir.absolutePath()).arg(photoUrl.path().replace("/", "%")));
         JuickDownloadItem it(path, url);
         downloader_->get(it);
