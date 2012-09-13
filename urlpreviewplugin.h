@@ -1,6 +1,6 @@
 /*
- * juickplugin.h - plugin
- * Copyright (C) 2009-2012 Kravtsov Nikolai, Khryukin Evgeny
+ * urlpreviewplugin.h - plugin
+ * Copyright (C) 2009-2012 Isupov Andrey
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef JUICKPLUGIN_H
-#define JUICKPLUGIN_H
+#ifndef URLPREVIERWPLUGIN_H
+#define URLPREVIEWPLUGIN_H
 
 #include "psiplugin.h"
 #include "stanzafilter.h"
@@ -117,4 +117,4 @@ private:
 	JuickDownloader* downloader_;
 };
 
-#endif // JUICKPLUGIN_H
+#endif // URLPREVIEWPLUGIN_H
