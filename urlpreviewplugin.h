@@ -97,7 +97,7 @@ private:
     QNetworkAccessManager *m_netman;
 
     QSize m_maxImageSize;
-    quint64 m_maxFileSize;
+    int m_maxFileSize;
     bool m_enableYoutubePreview;
     bool m_enableImagesPreview;
     bool m_enableSitePreview;

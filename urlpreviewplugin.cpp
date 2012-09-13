@@ -147,7 +147,7 @@ bool UrlPreviewPlugin::enable()
     createCacheDir();
 
      m_maxImageSize = psiOptions->getPluginOption(constmaxImageSize,m_maxImageSize).toSize();
-     m_maxFileSize = psiOptions->getPluginOption(constmaxFileSize,m_maxFileSize).toDouble();
+     m_maxFileSize = psiOptions->getPluginOption(constmaxFileSize,m_maxFileSize).toInt();
      m_enableYoutubePreview = psiOptions->getPluginOption(constenableYoutubePreview, m_enableYoutubePreview).toBool();
      m_enableImagesPreview = psiOptions->getPluginOption(constenableImagesPreview, m_enableImagesPreview).toBool();
      m_enableSitePreview = psiOptions->getPluginOption(constenableSitePreview, m_enableSitePreview).toBool();
